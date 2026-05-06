@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Environmental monitoring placeholder landscape</title>
+  <desc id="desc">A stylized aerial landscape used as a temporary hero image for land use, vegetation, and drought monitoring.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f3f7ff"/>
+      <stop offset="100%" stop-color="#ece4ff"/>
+    </linearGradient>
+    <linearGradient id="mesa" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#174ea6"/>
+      <stop offset="100%" stop-color="#071b4d"/>
+    </linearGradient>
+    <linearGradient id="valley" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8aa86d"/>
+      <stop offset="100%" stop-color="#425f42"/>
+    </linearGradient>
+    <linearGradient id="ridge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6d3bbf"/>
+      <stop offset="100%" stop-color="#452082"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.06"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="1600" height="1200" fill="url(#sky)"/>
+  <ellipse cx="1180" cy="230" rx="120" ry="120" fill="#dbeafe" opacity="0.85"/>
+  <path d="M0 520C160 460 260 450 420 490C560 524 670 598 810 594C980 590 1080 486 1230 472C1380 458 1492 516 1600 560V1200H0Z" fill="url(#mesa)"/>
+  <path d="M0 670C160 606 314 594 478 640C606 676 726 742 864 734C1034 726 1160 622 1320 610C1430 602 1510 634 1600 690V1200H0Z" fill="url(#ridge)"/>
+  <path d="M0 770C154 698 314 694 468 742C586 780 718 858 876 850C1016 842 1148 758 1280 742C1434 724 1524 756 1600 806V1200H0Z" fill="#dbeafe"/>
+  <path d="M0 880C184 786 380 806 576 884C750 954 916 988 1106 954C1260 926 1434 830 1600 834V1200H0Z" fill="url(#valley)"/>
+  <path d="M184 728C314 676 462 698 594 758C710 810 842 850 978 830C1120 810 1260 738 1408 730" fill="none" stroke="#ece4ff" stroke-opacity="0.52" stroke-width="5"/>
+  <path d="M160 842C340 784 496 820 656 896C804 964 1000 988 1188 928C1306 890 1404 826 1494 796" fill="none" stroke="#dbeafe" stroke-opacity="0.5" stroke-width="4"/>
+  <path d="M822 720C870 744 928 742 974 720C1024 698 1076 652 1126 632" fill="none" stroke="#355a41" stroke-width="8" stroke-linecap="round"/>
+  <path d="M824 724C786 782 752 840 720 900" fill="none" stroke="#355a41" stroke-width="8" stroke-linecap="round"/>
+  <path d="M900 748C920 810 946 860 980 920" fill="none" stroke="#355a41" stroke-width="8" stroke-linecap="round"/>
+  <path d="M770 826L1212 918" fill="none" stroke="#d5e4ca" stroke-width="20" stroke-linecap="round" opacity="0.45"/>
+  <rect width="1600" height="1200" filter="url(#grain)" opacity="0.6"/>
+</svg>
