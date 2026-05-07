@@ -184,7 +184,7 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-r from-white via-white/30 to-transparent" />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,15,46,0.05)_0%,rgba(5,15,46,0.35)_100%)]" />
 
-            {/* Slider controls */}
+            {/* Slider controls */} 
             <div className="absolute bottom-8 left-8 flex gap-2 z-10">
               {[prevSlide, nextSlide].map((fn, i) => (
                 <button

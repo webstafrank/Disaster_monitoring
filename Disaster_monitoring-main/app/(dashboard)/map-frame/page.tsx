@@ -1,3 +1,4 @@
+"use client";
 import { MapFramePanel } from "./_components/map-frame-panel";
 
 export default function MapFramePage() {

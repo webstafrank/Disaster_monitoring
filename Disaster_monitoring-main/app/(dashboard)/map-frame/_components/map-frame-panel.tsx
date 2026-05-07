@@ -156,7 +156,7 @@ function KPICard({ title, value, change, changeType, icon: Icon, color }: {
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{title}</p>
-          <p className="mt-2 text-xl tracking-tighter font-bold text-blue-900 text-shadow-amber-700 text-[var(--foreground)]">{value}</p>
+          <p className="mt-2 text-xl tracking-tight font-bold text-black/70 text-shadow-amber-700 text-[var(--foreground)]">{value}</p>
           <div className="mt-2 flex items-center gap-1.5">
             {changeType === "up" && <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />}
             {changeType === "down" && <ArrowDownRight className="h-3.5 w-3.5 text-red-500" />}

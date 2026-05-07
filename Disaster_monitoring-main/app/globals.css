@@ -287,17 +287,61 @@ a { color: inherit; text-decoration: none; }
   background: #0f172a; /* dark background */
 }
 
-/* Thumb with gradient */
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #f59e0b, #ef4444, #3b82f6);
+
+/* ===== NAVBAR SCROLLBAR ===== */
+
+.nav-scroll {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: transparent transparent;
+}
+
+/* Webkit base */
+.nav-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track (glass effect) */
+.nav-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Animated gradient thumb */
+.nav-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #f59e0b,
+    #ef4444,
+    #3b82f6,
+    #8b5cf6
+  );
+  background-size: 300% 300%;
   border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  animation: scrollGlow 4s ease infinite;
 }
 
-/* Hover effect */
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #fbbf24, #f97316, #2563eb);
+/* Hover intensifies glow */
+.nav-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    #fbbf24,
+    #f97316,
+    #2563eb,
+    #a855f7
+  );
+  animation: scrollGlow 2s ease infinite;
 }
 
-::-webkit-scrollbar-thumb {
-  border: 2px solid #0f172a; /* gives floating effect */
+/* Smooth animated movement */
+@keyframes scrollGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

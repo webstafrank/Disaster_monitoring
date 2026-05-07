@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  Brain,
 } from "lucide-react";
 
 // ─── Theme Colors (hardcoded for reliability) ──────────────
@@ -63,10 +64,10 @@ const navigationItems = [
 
 const bottomItems = [
   {
-    href: "/logout",
-    label: "Logout",
-    description: "Sign out of your account",
-    icon: LogOut,
+    href: "/risk-prediction",
+    label: "Risk prediction",
+    description: "Run geospatial models and view forecasts",
+    icon: Brain,
     variant: "danger" as const,
   },
 ];
@@ -265,7 +266,7 @@ export function SideNav() {
         </div>
 
         {/* Nav Items */}
-        <div className="flex-1 space-y-2 overflow-y-auto">
+        <div className="flex-1 space-y-2 overflow-y-auto nav-scroll">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3 px-1">
             Navigation
           </p>
