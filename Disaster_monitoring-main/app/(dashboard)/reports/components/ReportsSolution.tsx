@@ -25,7 +25,6 @@ import {
   Activity,
 } from "lucide-react";
 
-// ─── Types ───────────────────────────────────────────────────
 
 interface DataSourceStatus {
   readonly id: string;
@@ -76,19 +75,6 @@ const KSA_COLORS = {
   surface: "#EFF6FF",
   line: "#BFDBFE",
 } as const;
-
-// ─── Mock API Service (Replace with real API calls) ────────
-
-/**
- * TODO: Replace these mock functions with actual API calls:
- * 
- * 1. GET /api/v1/data-sources/status - Returns live data source health
- * 2. POST /api/v1/reports/export - Triggers report generation
- * 3. GET /api/v1/reports/exports/:id - Polls export status
- * 4. GET /api/v1/analytics/anomalies - Fetches detected anomalies
- * 5. POST /api/v1/data-sources/refresh - Triggers data refresh
- */
-
 async function fetchDataSourceStatus(): Promise<DataSourceStatus[]> {
   // Simulate API delay
   await new Promise((r) => setTimeout(r, 800));

@@ -53,12 +53,12 @@ const navigationItems = [
     description: "Area-based charts & summaries",
     icon: FileBarChart,
   },
-  {
-    href: "/",
-    label: "Return to Main Site",
-    description: "Visit the public-facing website",
-    icon: FactoryIcon,
-  },
+  // {
+  //   href: "/",
+  //   label: "Return to Main Site",
+  //   description: "Visit the public-facing website",
+  //   icon: FactoryIcon,
+  // },
 ];
 
 const bottomItems = [

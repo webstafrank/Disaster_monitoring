@@ -6,7 +6,6 @@ import L from "leaflet";
 import type { GeoJsonObject } from "geojson";
 import "leaflet/dist/leaflet.css";
 
-/* ─── Fix Leaflet default icons (run once globally) ─── */
 if (typeof window !== "undefined") {
   delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: unknown })._getIconUrl;
   L.Icon.Default.mergeOptions({
@@ -16,7 +15,6 @@ if (typeof window !== "undefined") {
   });
 }
 
-/* ─── ChangeView — only pans when center/zoom ACTUALLY change ─── */
 const ChangeView = memo(function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap();
   const prevCenter = useRef(center);
@@ -56,7 +54,6 @@ const GeoJSONLayer = memo(function GeoJSONLayer({ data }: { data: GeoJsonObject 
   return <GeoJSON data={data} style={style} onEachFeature={onEachFeature} />;
 });
 
-/* ─── Stable Map — NEVER re-mounts ─── */
 const StableMap = memo(function StableMap({
   center,
   zoom,
@@ -84,12 +81,10 @@ const StableMap = memo(function StableMap({
   );
 });
 
-/* ─── Main MapView — NO artificial loading states ─── */
 export default function MapView({ center, zoom }: { center: [number, number]; zoom: number }) {
   const [geoData, setGeoData] = useState<GeoJsonObject | null>(null);
   const fetched = useRef(false);
 
-  /* Fetch GeoJSON once */
   useEffect(() => {
     if (fetched.current) return;
     fetched.current = true;
@@ -100,7 +95,6 @@ export default function MapView({ center, zoom }: { center: [number, number]; zo
       .catch((err) => console.error("Error loading GeoJSON:", err));
   }, []);
 
-  /* Render map IMMEDIATELY — no isReady delay */
   return (
     <div className="h-full w-full overflow-hidden rounded-2xl border border-[var(--line)] shadow-inner">
       <StableMap center={center} zoom={zoom} geoData={geoData} />
