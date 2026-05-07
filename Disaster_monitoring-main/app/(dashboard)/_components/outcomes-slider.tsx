@@ -62,13 +62,13 @@ export function OutcomesSlider() {
             index === current ? "opacity-100 scale-100" : "opacity-0 scale-[1.03] pointer-events-none"
           }`}
         >
-          <Image src={outcome.image} alt={outcome.title} fill className="object-cover opacity-35" />
+          <Image src={outcome.image} alt={outcome.title} fill className="object-cover opacity-90" />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--foreground)] via-[var(--foreground)]/50 to-[var(--accent-strong)]/20" />
 
           <div className="relative h-full flex flex-col justify-center px-8 md:px-14 lg:px-20 py-16">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2.5 rounded-full bg-white/10 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white/80 mb-5 border border-white/10">
-                Expected Outcome {outcome.tag}
+              <div className="inline-flex items-center gap-2.5 rounded-full bg-white/10 backdrop-blur-2xl px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white/80 mb-5 border border-white/10">
+                Expected Outcome <span className='font-bold text-lg text-blue-500'>{outcome.tag}</span>
               </div>
               <h3
                 className="text-3xl md:text-4xl font-bold text-white leading-tight"

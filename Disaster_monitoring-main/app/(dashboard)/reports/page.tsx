@@ -26,6 +26,7 @@ import {
   Maximize2,
   PieChart,
 } from "lucide-react";
+import ReportSolutions from "./components/ReportsSolution";
 
 // ─── Kenya Space Agency Color Palette ────────────────────────
 // Professional Blue & Black Theme
@@ -1239,6 +1240,10 @@ export default function ReportsPage() {
             </p>
           </div>
         </div>
+      </section>
+      {/* Report Solutions site */}
+      <section>
+        <ReportSolutions />
       </section>
     </div>
   );
