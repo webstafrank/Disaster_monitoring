@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+/* ── Design Tokens ─────────────────────────────────────────────────── */
+:root {
+  /* Core brand */
+  --background: #f0f4f8;
+  --foreground: #0a1628;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: #eef2f7;
+  --surface-muted: #e4eaf3;
+  --line: rgba(10, 22, 40, 0.1);
+
+  /* Blues (KSA primary) */
+  --accent: #1a5fb4;
+  --accent-strong: #0d3b7a;
+  --accent-soft: #d6e8ff;
+
+  /* Purple (secondary) */
+  --secondary: #6b3fa0;
+  --secondary-strong: #42266a;
+  --secondary-soft: #ede4ff;
+
+  /* Earth tones (WFP/Kenya context) */
+  --earth-green: #2d6a4f;
+  --earth-green-soft: #d8f3dc;
+  --savanna-gold: #c8841a;
+  --savanna-gold-soft: #fef3d0;
+  --terracotta: #c0392b;
+  --terracotta-soft: #fde8e6;
+  --sky-blue: #0077b6;
+  --sky-blue-soft: #caf0f8;
+  --muted-sand: #e8d5b7;
+
+  /* Status */
+  --success: #1a7a46;
+  --success-soft: #d4edda;
+  --warning: #c0392b;
+  --warning-soft: #fde8e6;
+  --caution: #d97706;
+  --caution-soft: #fef3c7;
+
+  /* Sidebar */
+  --sidebar-bg: #0d1f3c;
+  --sidebar-surface: rgba(255, 255, 255, 0.06);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-text: rgba(255, 255, 255, 0.85);
+  --sidebar-muted: rgba(255, 255, 255, 0.45);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Inter", "Segoe UI", sans-serif;
+  --font-heading: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-mono: "SFMono-Regular", "SF Mono", "Consolas", monospace;
+}
+
+/* ── Base Reset ────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2f8 0%, #f0ecf8 50%, #eaf4f0 100%);
+  color: var(--foreground);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+/* ── Layout ────────────────────────────────────────────────────────── */
+.dashboard-shell {
+  position: relative;
+}
+
+/* ── Glass / Surface Panels ────────────────────────────────────────── */
+.glass-panel {
+  background: var(--surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px rgba(10, 22, 40, 0.07), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 20px rgba(10, 22, 40, 0.06);
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────── */
+.sidebar-panel {
+  background: var(--sidebar-bg);
+  background-image:
+    radial-gradient(circle at 80% 20%, rgba(26, 95, 180, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 20% 80%, rgba(45, 106, 79, 0.1) 0%, transparent 50%);
+  color: white !important;
+}
+
+.sidebar-panel a,
+.sidebar-panel span,
+.sidebar-panel p,
+.sidebar-panel h1 {
+  color: white !important;
+}
+
+/* ── Map Grid ────────────────────────────────────────────────────────── */
+.map-grid {
+  background-image:
+    linear-gradient(rgba(26, 95, 180, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 95, 180, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.contour-lines {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(26, 95, 180, 0.1) 0 18%, transparent 19%),
+    radial-gradient(circle at 75% 40%, rgba(192, 57, 43, 0.1) 0 14%, transparent 15%),
+    radial-gradient(circle at 55% 75%, rgba(45, 106, 79, 0.1) 0 20%, transparent 21%);
+}
+
+/* ── Stat Cards ─────────────────────────────────────────────────────── */
+.stat-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 16px rgba(10, 22, 40, 0.05), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  border-radius: 1.5rem;
+  padding: 1.25rem 1.5rem;
+}
+
+/* ── Severity Chips ─────────────────────────────────────────────────── */
+.chip-normal { background: var(--earth-green-soft); color: var(--earth-green); }
+.chip-watch  { background: var(--savanna-gold-soft); color: var(--savanna-gold); }
+.chip-warning { background: var(--terracotta-soft); color: var(--terracotta); }
+.chip-emergency { background: #fee2e2; color: #991b1b; }
+
+/* ── Gradient Text ──────────────────────────────────────────────────── */
+.text-gradient-blue {
+  background: linear-gradient(135deg, var(--accent-strong), var(--sky-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-earth {
+  background: linear-gradient(135deg, var(--earth-green), var(--savanna-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Scrolling Alert Ticker ─────────────────────────────────────────── */
+.ticker-track {
+  display: flex;
+  gap: 3rem;
+  white-space: nowrap;
+  animation: ticker-scroll 28s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+
+/* ── Animations ─────────────────────────────────────────────────────── */
+.fade-in  { animation: fade-in 600ms ease-out both; }
+.rise-in  { animation: rise-in 700ms ease-out both; }
+.slide-down { animation: slide-down 500ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.bounce-in { animation: bounce-in 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position: 200% center; }
+}
+
+/* ── Phase Badge ────────────────────────────────────────────────────── */
+.phase-badge-active {
+  background: linear-gradient(135deg, var(--earth-green), var(--sky-blue));
+  color: white;
+  box-shadow: 0 4px 12px rgba(26, 95, 180, 0.3);
+}
+.phase-badge-complete {
+  background: var(--earth-green-soft);
+  color: var(--earth-green);
+  border: 1px solid var(--earth-green);
+}
+.phase-badge-planned {
+  background: var(--surface-muted);
+  color: #64748b;
+  border: 1px solid var(--line);
+}
+
+/* ── Alert Pulse ────────────────────────────────────────────────────── */
+.alert-pulse {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+/* ── Hover Lift ─────────────────────────────────────────────────────── */
+.hover-lift {
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(10, 22, 40, 0.1);
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-soft); }
