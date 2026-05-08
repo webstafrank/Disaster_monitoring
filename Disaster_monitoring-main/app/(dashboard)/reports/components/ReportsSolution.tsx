@@ -24,6 +24,8 @@ import {
   Server,
   Activity,
 } from "lucide-react";
+import Link from "next/link";
+import { MagneticButton, RippleButton, NeonButton, TiltButton, PulseRingButton, LiquidFillButton } from "./button";
 
 
 interface DataSourceStatus {
@@ -645,6 +647,12 @@ export default function ReportSolutions() {
             )}
           </div>
         </div>
+
+        {/* ........button to risk prediction model and link to model details page....... */}
+        <MagneticButton href="/risk-prediction" color="purple">See Risk Prediction Results</MagneticButton>
+
+
+        
       </div>
 
       
