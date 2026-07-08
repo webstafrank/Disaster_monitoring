@@ -1,94 +1,216 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Map, FileBarChart, Zap } from "lucide-react";
+import {
+  Home,
+  Map,
+  FileBarChart,
+  Layers,
+  Globe2,
+  Menu,
+  X,
+  Bell,
+  BookOpen,
+  Settings,
+  ChevronRight,
+  Satellite,
+  Activity,
+} from "lucide-react";
+import Image from "next/image";
 
-const navigationItems = [
+const mainNavItems = [
   {
     href: "/",
     label: "Home",
-    description: "Mission overview and dashboard summary",
     icon: Home,
   },
   {
     href: "/map-frame",
-    label: "Map Frame",
-    description: "Map viewport, layers, and basemap setup",
+    label: "Spatial Command",
     icon: Map,
   },
   {
     href: "/reports",
-    label: "Reports",
-    description: "Area-based insight charts and summaries",
+    label: "ASAL Analytics",
     icon: FileBarChart,
+  },
+  {
+    href: "/topics-under-study",
+    label: "Research Topics",
+    icon: Layers,
   },
 ];
 
+const extraNavItems = [
+  {
+    href: "/alerts",
+    label: "Alerts & Warnings",
+    icon: Bell,
+    badge: "3",
+  },
+  {
+    href: "/field-data",
+    label: "Field Data",
+    icon: Activity,
+  },
+  {
+    href: "/data-library",
+    label: "Data Library",
+    icon: BookOpen,
+  },
+  {
+    href: "/satellites",
+    label: "EO Satellites",
+    icon: Satellite,
+  },
+  {
+    href: "/settings",
+    label: "Settings",
+    icon: Settings,
+  },
+];
+
+function NavItem({
+  href,
+  label,
+  icon: Icon,
+  isActive,
+  badge,
+  onClick,
+}: {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  isActive: boolean;
+  badge?: string;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`
+        group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+        ${isActive
+          ? "bg-[var(--accent)] !text-white font-bold shadow-md"
+          : "!text-white hover:bg-white/10 font-medium"
+        }
+      `}
+    >
+      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors
+        ${isActive ? "bg-white/20 text-white" : "text-current"}
+      `}>
+        <Icon className="h-4 w-4" />
+      </div>
+      <span className="text-sm flex-1 !text-white">{label}</span>
+      {badge && (
+        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--terracotta)] px-1.5 text-[10px] font-bold text-white">
+          {badge}
+        </span>
+      )}
+      {isActive && <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />}
+    </Link>
+  );
+}
+
 export function SideNav() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="glass-panel fade-in flex h-full flex-col rounded-[2rem] p-4 lg:p-6">
-      <div className="mb-8 border-b border-[var(--line)] pb-6">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-strong)] text-white shadow-lg mb-4">
-          <Zap className="h-6 w-6" />
+    <>
+      {/* Mobile Toggle */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed top-4 right-4 z-50 rounded-xl bg-[var(--sidebar-bg)] p-3 text-white shadow-lg lg:hidden"
+      >
+        {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <nav className={`
+        fixed inset-y-0 left-0 z-40 w-72 transform transition-transform duration-300 ease-in-out lg:static lg:w-auto lg:translate-x-0
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        sidebar-panel flex h-full flex-col rounded-[2rem] overflow-hidden shadow-2xl lg:shadow-none
+      `}>
+
+        {/* Brand Header */}
+        <div className="px-5 pt-6 pb-5 border-b border-[var(--sidebar-border)]">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md">
+              <Image src="/ksa.PNG" alt="KSA" width={28} height={28} style={{ width: 'auto', height: 28 }} className="object-contain" />
+            </div>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md">
+              <Image src="/wfp.PNG" alt="WFP" width={28} height={28} style={{ width: 'auto', height: 28 }} className="object-contain" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <Globe2 className="h-3 w-3 text-[var(--savanna-gold)]" />
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] !text-white">
+              KSA · WFP Initiative
+            </p>
+          </div>
+          <h1 className="text-xl font-bold text-white leading-tight">
+            Rangeland Intelligence Hub
+          </h1>
         </div>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent)]">
-          KSA DISASTER
-        </p>
-        <h1 className="mt-2 text-2xl font-bold tracking-tight text-[var(--foreground)]">
-          Spatial Command
-        </h1>
-      </div>
 
-      <div className="flex-1 space-y-3">
-        {navigationItems.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
 
-          return (
-            <Link
+          {/* Main Nav */}
+          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] !text-white opacity-80">
+            Navigation
+          </p>
+          {mainNavItems.map((item) => (
+            <NavItem
               key={item.href}
               href={item.href}
-              className={[
-                "group block rounded-[1.8rem] border px-5 py-5 transition-all duration-300",
-                isActive
-                  ? "border-[var(--accent)] bg-[var(--accent-strong)] text-white shadow-xl shadow-[color:rgba(23,78,166,0.15)]"
-                  : "border-transparent bg-white/40 hover:border-[var(--line)] hover:bg-white",
-              ].join(" ")}
-            >
-              <div className="flex items-center gap-3">
-                <div className={[
-                  "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
-                  isActive ? "bg-white/20 text-white" : "bg-[var(--accent-soft)] text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white"
-                ].join(" ")}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                <p className="text-sm font-bold tracking-tight">{item.label}</p>
-              </div>
-              <p
-                className={[
-                  "mt-3 text-xs leading-relaxed",
-                  isActive ? "text-white/70" : "text-slate-500",
-                ].join(" ")}
-              >
-                {item.description}
-              </p>
-            </Link>
-          );
-        })}
-      </div>
+              label={item.label}
+              icon={item.icon}
+              isActive={pathname === item.href}
+              onClick={() => setIsOpen(false)}
+            />
+          ))}
 
-      <div className="mt-auto pt-6">
-        <div className="rounded-2xl bg-[var(--surface-strong)] p-4 border border-[var(--line)]">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">System Status</p>
-          <div className="mt-2 flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-[var(--success)] animate-pulse" />
-            <p className="text-xs font-medium text-slate-600">GeoServer Online</p>
+          {/* Divider */}
+          <div className="my-3 mx-3 border-t border-[var(--sidebar-border)]" />
+
+          {/* Extra Nav */}
+          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.18em] !text-white opacity-80">
+            Tools & Data
+          </p>
+          {extraNavItems.map((item) => (
+            <NavItem
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              icon={item.icon}
+              isActive={pathname === item.href}
+              badge={item.badge}
+              onClick={() => setIsOpen(false)}
+            />
+          ))}
+        </div>
+
+        {/* Footer Tag */}
+        <div className="px-5 py-4 border-t border-[var(--sidebar-border)]">
+          <div className="flex items-center gap-2 text-[var(--sidebar-muted)]">
+            <div className="h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
+            <p className="text-[11px] font-medium !text-white">GeoServer Online · Live</p>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }

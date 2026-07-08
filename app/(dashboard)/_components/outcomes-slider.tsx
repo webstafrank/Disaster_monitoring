@@ -51,7 +51,7 @@ export function OutcomesSlider() {
   const prev = () => setCurrent((prev) => (prev - 1 + outcomes.length) % outcomes.length);
 
   return (
-    <section className="relative overflow-hidden rounded-[2.5rem] bg-[var(--foreground)] min-h-[500px] flex flex-col justify-center">
+    <section className="relative overflow-hidden rounded-[2.5rem] bg-[var(--sidebar-bg)] min-h-[500px] flex flex-col justify-center shadow-xl">
       {outcomes.map((outcome, index) => (
         <div
           key={outcome.title}
@@ -63,27 +63,29 @@ export function OutcomesSlider() {
             src={outcome.image}
             alt={outcome.title}
             fill
-            className="object-cover opacity-40"
+            className="object-cover opacity-30 mix-blend-luminosity"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--foreground)] via-[var(--foreground)]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--sidebar-bg)] via-[var(--sidebar-bg)]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--sidebar-bg)] via-[var(--sidebar-bg)]/80 to-transparent" />
 
           <div className="relative h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-20">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-white mb-6 border border-white/10">
-                Expected Outcome 0{index + 1}
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-white mb-6 border border-white/20">
+                <span className="h-2 w-2 rounded-full bg-[var(--savanna-gold)]" />
+                Strategic Outcome 0{index + 1}
               </div>
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
                 {outcome.title}
               </h3>
-              <p className="mt-6 text-lg md:text-xl text-white/70 leading-relaxed max-w-2xl">
+              <p className="mt-6 text-lg md:text-xl text-[var(--sidebar-muted)] leading-relaxed max-w-2xl">
                 {outcome.description}
               </p>
 
               <div className="mt-10 grid gap-4 sm:grid-cols-3">
                 {outcome.points.map((point) => (
-                  <div key={point} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/5">
-                    <CheckCircle2 className="h-5 w-5 text-[var(--accent-soft)] shrink-0" />
-                    <p className="text-sm font-bold text-white/90 leading-tight">{point}</p>
+                  <div key={point} className="flex items-center gap-3 bg-[var(--sidebar-surface)] backdrop-blur-sm p-4 rounded-2xl border border-[var(--sidebar-border)] hover:bg-[rgba(255,255,255,0.1)] transition-colors">
+                    <CheckCircle2 className="h-5 w-5 text-[var(--earth-green)] shrink-0" />
+                    <p className="text-sm font-bold text-[var(--sidebar-text)] leading-tight">{point}</p>
                   </div>
                 ))}
               </div>
@@ -94,27 +96,27 @@ export function OutcomesSlider() {
 
       {/* Navigation Controls */}
       <div className="absolute bottom-8 right-8 md:right-16 flex items-center gap-4 z-20">
-        <div className="flex gap-2">
+        <div className="flex gap-2 bg-[var(--sidebar-surface)] p-2 rounded-full backdrop-blur-md border border-[var(--sidebar-border)]">
             {outcomes.map((_, i) => (
                 <button
                     key={i}
                     onClick={() => setCurrent(i)}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                        i === current ? "w-8 bg-white" : "w-2 bg-white/30 hover:bg-white/50"
+                    className={`h-2 rounded-full transition-all duration-500 ${
+                        i === current ? "w-8 bg-[var(--savanna-gold)]" : "w-2 bg-white/30 hover:bg-white/50"
                     }`}
                 />
             ))}
         </div>
-        <div className="flex gap-2 ml-4">
+        <div className="flex gap-2 ml-2">
             <button
                 onClick={prev}
-                className="h-12 w-12 flex items-center justify-center rounded-full border border-white/20 bg-white/5 text-white backdrop-blur-md hover:bg-white hover:text-[var(--foreground)] transition-all"
+                className="h-12 w-12 flex items-center justify-center rounded-full border border-[var(--sidebar-border)] bg-[var(--sidebar-surface)] text-white backdrop-blur-md hover:bg-white hover:text-[var(--foreground)] transition-all"
             >
                 <ChevronLeft className="h-6 w-6" />
             </button>
             <button
                 onClick={next}
-                className="h-12 w-12 flex items-center justify-center rounded-full border border-white/20 bg-white/5 text-white backdrop-blur-md hover:bg-white hover:text-[var(--foreground)] transition-all"
+                className="h-12 w-12 flex items-center justify-center rounded-full border border-[var(--sidebar-border)] bg-[var(--sidebar-surface)] text-white backdrop-blur-md hover:bg-white hover:text-[var(--foreground)] transition-all"
             >
                 <ChevronRight className="h-6 w-6" />
             </button>
