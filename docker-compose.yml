@@ -1,0 +1,86 @@
+# On-prem stack for the KSA Rangeland Intelligence Hub.
+# One physical server, isolated services, one door in (Nginx on 443).
+#   docker compose --env-file .env up -d --build
+#
+# The narrative service (llm) needs the authenticated `claude` CLI. Either run it
+# on the host (see services/llm/README.md) or mount the host's Claude config into
+# the container as shown below.
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-asal}
+      POSTGRES_USER: ${POSTGRES_USER:-asal}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks: [internal]
+
+  geoserver:
+    image: docker.osgeo.org/geoserver:2.25.2
+    restart: unless-stopped
+    environment:
+      GEOSERVER_ADMIN_USER: ${GEOSERVER_USER:-admin}
+      GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_PASSWORD:?set GEOSERVER_PASSWORD in .env}
+    volumes:
+      - geoserver_data:/opt/geoserver_data
+      - ${RASTER_DIR:-./data/rasters}:/opt/rasters:ro
+    depends_on: [db]
+    networks: [internal]
+
+  api:
+    build: ./services/api
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE: ${DATA_SOURCE:-stub}
+      LLM_URL: http://llm:8100
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      GEOSERVER_URL: http://geoserver:8080/geoserver
+      GEOSERVER_WORKSPACE: ${GEOSERVER_WORKSPACE:-asal}
+      GEOSERVER_USER: ${GEOSERVER_USER:-admin}
+      GEOSERVER_PASSWORD: ${GEOSERVER_PASSWORD:-}
+    volumes:
+      - ./contracts:/contracts:ro
+    depends_on: [llm]
+    networks: [internal]
+
+  llm:
+    build: ./services/llm
+    restart: unless-stopped
+    environment:
+      LLM_MODE: ${LLM_MODE:-stub}
+    # For LLM_MODE=claude in a container, mount authenticated Claude config:
+    # volumes:
+    #   - ${CLAUDE_CONFIG_DIR:-/home/svc/.claude}:/root/.claude:ro
+    networks: [internal]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_BASE: /api
+    networks: [internal]
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
+    depends_on: [frontend, api, geoserver]
+    networks: [internal]
+
+volumes:
+  db_data:
+  geoserver_data:
+
+networks:
+  internal:
+    driver: bridge
