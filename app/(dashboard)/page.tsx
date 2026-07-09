@@ -101,14 +101,21 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden rounded-[2.5rem] bg-white shadow-sm border border-[var(--line)]">
-        {/* Background texture */}
+        {/* Hero imagery: photo occupies the right side in full, a white gradient over the
+            left keeps the headline legible. */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 right-0 h-full w-1/2 opacity-15">
-            <Image src="/iStock-1077574640.avif" alt="Kenya landscape" fill sizes="50vw" className="object-cover" />
+          <div className="absolute inset-y-0 right-0 w-[62%]">
+            <Image
+              src="/iStock-1077574640.avif"
+              alt="Aerial view of Kenya's arid and semi-arid rangelands"
+              fill
+              priority
+              sizes="62vw"
+              className="object-cover"
+            />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent" />
-          <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-[var(--savanna-gold)]/10 blur-3xl" />
-          <div className="absolute bottom-0 right-40 h-48 w-48 rounded-full bg-[var(--earth-green)]/10 blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/85 to-transparent" />
+          <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-t from-white/40 via-transparent to-transparent" />
         </div>
 
         <div className="relative z-10 p-8 md:p-12 lg:p-16 max-w-3xl">

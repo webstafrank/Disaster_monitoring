@@ -14,7 +14,7 @@ const outcomes = [
   {
     title: "Ecosystem Recovery",
     description: "Strengthened sustainable land management and ecosystem restoration through the use of long-term vegetation trend analysis and soil health monitoring.",
-    image: "/88112.jpg",
+    image: "/iStock-1077574640.avif",
     points: ["Verified satellite indices", "Historical trend analysis", "Institutional data sharing"]
   },
   {
@@ -26,13 +26,13 @@ const outcomes = [
   {
     title: "Institutional Capacity",
     description: "A workforce of national and county government officers proficient in interpreting EO-based forecasts, utilizing GIS tools, and operationalizing geospatial standards.",
-    image: "/231107.jpg",
+    image: "/88112.jpg",
     points: ["Technical GIS training", "Standardization of data", "Inter-agency collaboration"]
   },
   {
     title: "Youth Digital Inclusion",
     description: "Increased participation of Kenyan youth in the digital and space-enabled economy through specialized training in image annotation and geospatial analytics.",
-    image: "/231107.jpg",
+    image: "/iStock-1077574640.avif",
     points: ["Image annotation skills", "Data science workshops", "Digital economy access"]
   }
 ];
@@ -63,10 +63,12 @@ export function OutcomesSlider() {
             src={outcome.image}
             alt={outcome.title}
             fill
-            className="object-cover opacity-30 mix-blend-luminosity"
+            sizes="100vw"
+            className="object-cover opacity-70"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--sidebar-bg)] via-[var(--sidebar-bg)]/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--sidebar-bg)] via-[var(--sidebar-bg)]/80 to-transparent" />
+          {/* Scrims keep the left-side text legible while the photo stays visible on the right. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--sidebar-bg)] via-[var(--sidebar-bg)]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--sidebar-bg)] via-[var(--sidebar-bg)]/70 to-transparent" />
 
           <div className="relative h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-20">
             <div className="max-w-3xl">
