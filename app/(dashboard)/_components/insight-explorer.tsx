@@ -252,14 +252,16 @@ export function InsightExplorer() {
                     />
                     <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} width={40} />
                     <Tooltip
-                      contentStyle={{ borderRadius: 12, border: "1px solid var(--line)", fontSize: 12 }}
+                      contentStyle={{ borderRadius: 0, border: "1px solid var(--line)", fontSize: 12 }}
                     />
                     <Area
-                      type="monotone"
+                      type="linear"
                       dataKey="value"
                       stroke="var(--accent)"
                       strokeWidth={2.5}
                       fill="url(#insightFill)"
+                      dot={false}
+                      activeDot={{ r: 0 }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>

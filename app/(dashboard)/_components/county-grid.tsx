@@ -36,8 +36,8 @@ function TrendSparkline({ data, color }: { data: number[]; color: string }) {
         fill="none"
         stroke={color}
         strokeWidth="12"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        strokeLinecap="butt"
+        strokeLinejoin="miter"
         points={points}
       />
     </svg>

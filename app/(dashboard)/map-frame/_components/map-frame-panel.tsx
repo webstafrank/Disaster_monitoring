@@ -81,8 +81,8 @@ function MiniSparkline({ data, color }: { data: number[], color: string }) {
     const points = data.map((d, i) => `${i * 20},${50 - d * 40}`).join(" ");
     return (
         <svg viewBox="0 0 100 50" className="w-full h-12 overflow-visible">
-            <polyline fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" points={points} />
-            <circle cx="80" cy={50 - data[4] * 40} r="4" fill={color} />
+            <polyline fill="none" stroke={color} strokeWidth="3" strokeLinecap="butt" strokeLinejoin="miter" points={points} />
+            <rect x="76" y={46 - data[4] * 40} width="8" height="8" fill={color} />
         </svg>
     );
 }
