@@ -75,8 +75,8 @@ const impacts = [
 
 const quickStats = [
   { label: "ASAL Counties", value: "10", icon: MapIcon, bg: "var(--accent-soft)", color: "var(--accent)" },
-  { label: "EO Layers", value: "5", icon: Layers, bg: "var(--earth-green-soft)", color: "var(--earth-green)" },
-  { label: "Indicators", value: "12", icon: Activity, bg: "var(--savanna-gold-soft)", color: "var(--savanna-gold)" },
+  { label: "Indicators", value: "5", icon: Activity, bg: "var(--savanna-gold-soft)", color: "var(--savanna-gold)" },
+  { label: "Forecast", value: "6mo", icon: Layers, bg: "var(--earth-green-soft)", color: "var(--earth-green)" },
   { label: "Sync Status", value: "Live", icon: Clock, bg: "var(--secondary-soft)", color: "var(--secondary)" },
 ];
 

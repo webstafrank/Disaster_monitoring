@@ -17,4 +17,7 @@ echo "== API gate tests =="
 echo "== LLM gate tests =="
 ( cd "$ROOT/services/llm" && "$PY" -m pytest )
 
+echo "== Forecast gate tests =="
+( cd "$ROOT/services/forecast" && "$PY" -m pytest )
+
 echo "All gate tests passed."

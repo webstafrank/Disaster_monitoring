@@ -36,6 +36,7 @@ services:
     environment:
       DATA_SOURCE: ${DATA_SOURCE:-stub}
       LLM_URL: http://llm:8100
+      FORECAST_URL: http://forecast:8200
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       GEOSERVER_URL: http://geoserver:8080/geoserver
       GEOSERVER_WORKSPACE: ${GEOSERVER_WORKSPACE:-asal}
@@ -43,7 +44,16 @@ services:
       GEOSERVER_PASSWORD: ${GEOSERVER_PASSWORD:-}
     volumes:
       - ./contracts:/contracts:ro
-    depends_on: [llm]
+    depends_on: [llm, forecast]
+    networks: [internal]
+
+  forecast:
+    build: ./services/forecast
+    restart: unless-stopped
+    environment:
+      FORECAST_ARTIFACTS: /app/artifacts
+    volumes:
+      - forecast_artifacts:/app/artifacts
     networks: [internal]
 
   llm:
@@ -80,6 +90,7 @@ services:
 volumes:
   db_data:
   geoserver_data:
+  forecast_artifacts:
 
 networks:
   internal:

@@ -51,7 +51,7 @@ export default function AlertsPage() {
         </p>
         <h2 className="text-4xl font-bold tracking-tight">Alerts &amp; Warnings</h2>
         <p className="mt-3 max-w-2xl text-base text-slate-600 leading-relaxed">
-          Active climate alerts derived from satellite indices across all 10 ASAL counties. Updated every 6 hours from EO baselines.
+          Sample climate alerts derived from satellite indices across all 10 ASAL counties.
         </p>
       </section>
 

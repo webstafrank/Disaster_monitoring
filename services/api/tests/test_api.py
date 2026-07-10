@@ -87,6 +87,14 @@ def test_insight_shape():
     # narrative present (fallback in gate lane -> generated False)
     assert "summary" in body["narrative"]
     assert body["narrative"]["generated"] is False
+    # forecast present; forecast service is not running in the gate lane, so the
+    # deterministic seasonal-naive fallback fills it in.
+    assert body["forecast"]["method"] == "fallback-naive"
+    assert body["forecast"]["trained"] is False
+    assert len(body["forecast"]["points"]) == 6
+    fp = body["forecast"]["points"][0]
+    assert fp["t"] == "2026-01"  # series ends 2025-12
+    assert fp["lower"] <= fp["value"] <= fp["upper"]
     assert body["generated_at"] is not None
 
 

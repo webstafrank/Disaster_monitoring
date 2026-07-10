@@ -31,6 +31,9 @@ __pycache__/
 .venv-test/
 .pytest_cache/
 
+# trained model artifacts (derived output, retrainable; never commit weights)
+/services/forecast/artifacts/
+
 # server data + certs (never in the repo)
 /data/
 /deploy/certs/

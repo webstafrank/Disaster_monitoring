@@ -96,6 +96,40 @@ class Narrative(BaseModel):
     model: str
 
 
+class ForecastPoint(BaseModel):
+    t: str
+    value: float
+    lower: float
+    upper: float
+
+
+class ForecastFit(BaseModel):
+    alpha: float
+    beta: float
+    gamma: float
+    season_length: int
+    sigma: float
+    n_train: int
+
+
+class ForecastBacktest(BaseModel):
+    mae: float
+    rmse: float
+    mase: float
+    naive_mae: float
+    horizon: int
+    beats_naive: bool
+
+
+class Forecast(BaseModel):
+    method: str  # holt-winters-additive | holt-linear | naive | fallback-naive
+    trained: bool
+    horizon: int
+    points: list[ForecastPoint]
+    fit: Optional[ForecastFit] = None
+    backtest: Optional[ForecastBacktest] = None
+
+
 class InsightRequest(BaseModel):
     location: str
     indicator: str
@@ -115,6 +149,7 @@ class Insight(BaseModel):
     series: ObservationSeries
     analytics: Analytics
     narrative: Narrative
+    forecast: Optional[Forecast] = None
     data_source: DataSourceKind
     generated_at: Optional[str] = None
 

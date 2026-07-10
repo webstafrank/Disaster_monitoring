@@ -15,8 +15,9 @@ import {
 } from "lucide-react";
 import {
   Area,
-  AreaChart,
   CartesianGrid,
+  ComposedChart,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -105,8 +106,34 @@ export function InsightExplorer() {
       });
   }, [loc, ind]);
 
-  const chartData =
-    insight?.series.points.map((p) => ({ t: p.t, value: p.value })) ?? [];
+  // History plus the forecast tail. The last historical point carries the forecast
+  // mean and a zero-width band so the dashed projection line connects cleanly.
+  const history = insight?.series.points ?? [];
+  const fc = insight?.forecast?.points ?? [];
+  const chartData: Array<{
+    t: string;
+    value?: number | null;
+    forecast?: number;
+    range?: [number, number];
+  }> = [
+    ...history.map((p, i) => {
+      const last = i === history.length - 1;
+      return {
+        t: p.t,
+        value: p.value,
+        forecast: last && p.value != null ? p.value : undefined,
+        range: last && p.value != null ? ([p.value, p.value] as [number, number]) : undefined,
+      };
+    }),
+    ...fc.map((p) => ({
+      t: p.t,
+      value: undefined,
+      forecast: p.value,
+      range: [p.lower, p.upper] as [number, number],
+    })),
+  ];
+  const projection = fc.length ? fc[fc.length - 1] : null;
+  const forecastMeta = insight?.forecast ?? null;
   const sev = insight ? SEVERITY_STYLE[insight.analytics.severity.class] : null;
 
   return (
@@ -229,15 +256,16 @@ export function InsightExplorer() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                  {insight.period.from} → {insight.period.to}
+                  {insight.period.from} → {projection ? projection.t : insight.period.to}
                 </p>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  {insight.series.points.length} points
+                  {insight.series.points.length} obs
+                  {fc.length ? ` + ${fc.length} forecast` : ""}
                 </span>
               </div>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartData} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
+                  <ComposedChart data={chartData} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
                     <defs>
                       <linearGradient id="insightFill" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.3} />
@@ -254,6 +282,19 @@ export function InsightExplorer() {
                     <Tooltip
                       contentStyle={{ borderRadius: 0, border: "1px solid var(--line)", fontSize: 12 }}
                     />
+                    {/* Prediction interval band over the forecast tail. */}
+                    <Area
+                      type="linear"
+                      dataKey="range"
+                      stroke="none"
+                      fill="var(--savanna-gold)"
+                      fillOpacity={0.15}
+                      dot={false}
+                      activeDot={false}
+                      isAnimationActive={false}
+                      connectNulls
+                    />
+                    {/* Observed history. */}
                     <Area
                       type="linear"
                       dataKey="value"
@@ -262,10 +303,64 @@ export function InsightExplorer() {
                       fill="url(#insightFill)"
                       dot={false}
                       activeDot={{ r: 0 }}
+                      connectNulls={false}
                     />
-                  </AreaChart>
+                    {/* Trained-model projection. */}
+                    <Line
+                      type="linear"
+                      dataKey="forecast"
+                      stroke="var(--savanna-gold)"
+                      strokeWidth={2.5}
+                      strokeDasharray="5 4"
+                      dot={false}
+                      activeDot={{ r: 3 }}
+                      isAnimationActive={false}
+                      connectNulls
+                    />
+                  </ComposedChart>
                 </ResponsiveContainer>
               </div>
+
+              {/* Projection summary */}
+              {projection && forecastMeta && (
+                <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-[var(--savanna-gold)]/30 bg-[var(--savanna-gold-soft)] p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="h-0 w-6 border-t-2 border-dashed border-[var(--savanna-gold)]" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      {forecastMeta.horizon}-mo forecast
+                    </p>
+                  </div>
+                  <p className="text-sm">
+                    <span className="font-bold text-[var(--foreground)]">
+                      {projection.value} {insight.indicator.unit}
+                    </span>{" "}
+                    <span className="text-slate-500">
+                      by {projection.t} (range {projection.lower}–{projection.upper})
+                    </span>
+                  </p>
+                  <div className="flex items-center gap-2 ml-auto">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      {forecastMeta.method}
+                    </span>
+                    {forecastMeta.backtest && (
+                      <span
+                        className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider"
+                        style={{
+                          background: forecastMeta.backtest.beats_naive
+                            ? "var(--earth-green-soft)"
+                            : "var(--terracotta-soft)",
+                          color: forecastMeta.backtest.beats_naive
+                            ? "var(--earth-green)"
+                            : "var(--terracotta)",
+                        }}
+                        title={`MASE ${forecastMeta.backtest.mase} vs seasonal-naive`}
+                      >
+                        {forecastMeta.backtest.beats_naive ? "beats naive" : "below naive"}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from . import analytics as an
-from . import llm_client
+from . import forecast_client, llm_client
 from .schemas import (
     Analytics,
     Anomaly,
@@ -61,6 +61,9 @@ def build_insight(req: InsightRequest, source: IndicatorSource) -> Insight:
     )
     analytics = _to_schema_analytics(result)
     narrative = llm_client.build_narrative(location, indicator, analytics)
+    forecast = forecast_client.build_forecast(
+        series, indicator, analytics, key=f"{location.id}:{indicator.id}"
+    )
 
     period = Period(**{
         "from": series.points[0].t if series.points else None,
@@ -74,6 +77,7 @@ def build_insight(req: InsightRequest, source: IndicatorSource) -> Insight:
         series=series,
         analytics=analytics,
         narrative=narrative,
+        forecast=forecast,
         data_source=source.kind,
         generated_at=datetime.now(timezone.utc).isoformat(),
     )

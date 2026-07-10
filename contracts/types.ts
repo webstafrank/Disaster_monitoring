@@ -87,6 +87,46 @@ export interface Narrative {
   model: string;
 }
 
+export interface ForecastPoint {
+  t: string; // YYYY-MM, future
+  value: number;
+  lower: number;
+  upper: number;
+}
+
+export interface ForecastFit {
+  alpha: number;
+  beta: number;
+  gamma: number;
+  season_length: number;
+  sigma: number;
+  n_train: number;
+}
+
+export interface ForecastBacktest {
+  mae: number;
+  rmse: number;
+  mase: number;
+  naive_mae: number;
+  horizon: number;
+  beats_naive: boolean;
+}
+
+export type ForecastMethod =
+  | "holt-winters-additive"
+  | "holt-linear"
+  | "naive"
+  | "fallback-naive";
+
+export interface Forecast {
+  method: ForecastMethod;
+  trained: boolean;
+  horizon: number;
+  points: ForecastPoint[];
+  fit?: ForecastFit;
+  backtest?: ForecastBacktest;
+}
+
 export interface InsightRequest {
   location: string;
   indicator: string;
@@ -106,6 +146,7 @@ export interface Insight {
   series: ObservationSeries;
   analytics: Analytics;
   narrative: Narrative;
+  forecast?: Forecast;
   data_source: DataSourceKind;
   generated_at: string | null;
 }

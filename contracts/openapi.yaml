@@ -232,6 +232,51 @@ components:
         generated:      { type: boolean, description: True when produced by local Claude Code, false when templated stub. }
         model:          { type: string }
 
+    ForecastPoint:
+      type: object
+      required: [t, value, lower, upper]
+      properties:
+        t:     { type: string, description: Future period label, YYYY-MM. }
+        value: { type: number }
+        lower: { type: number, description: Lower prediction bound. }
+        upper: { type: number, description: Upper prediction bound. }
+
+    ForecastFit:
+      type: object
+      required: [alpha, beta, gamma, season_length, sigma, n_train]
+      properties:
+        alpha:         { type: number }
+        beta:          { type: number }
+        gamma:         { type: number }
+        season_length: { type: integer }
+        sigma:         { type: number, description: Residual std used to size intervals. }
+        n_train:       { type: integer }
+
+    ForecastBacktest:
+      type: object
+      required: [mae, rmse, mase, naive_mae, horizon, beats_naive]
+      properties:
+        mae:         { type: number }
+        rmse:        { type: number }
+        mase:        { type: number, description: Model MAE / seasonal-naive MAE. Below 1 beats naive. }
+        naive_mae:   { type: number }
+        horizon:     { type: integer }
+        beats_naive: { type: boolean }
+
+    Forecast:
+      type: object
+      description: Forward projection from the trained Holt-Winters model (services/forecast).
+      required: [method, trained, horizon, points]
+      properties:
+        method:   { type: string, description: "holt-winters-additive | holt-linear | naive | fallback-naive." }
+        trained:  { type: boolean, description: True when served from a persisted (pre-trained) parameter set. }
+        horizon:  { type: integer, description: Number of months projected. }
+        points:
+          type: array
+          items: { $ref: "#/components/schemas/ForecastPoint" }
+        fit:      { $ref: "#/components/schemas/ForecastFit" }
+        backtest: { $ref: "#/components/schemas/ForecastBacktest" }
+
     InsightRequest:
       type: object
       required: [location, indicator]
@@ -257,6 +302,7 @@ components:
         series:      { $ref: "#/components/schemas/ObservationSeries" }
         analytics:   { $ref: "#/components/schemas/Analytics" }
         narrative:   { $ref: "#/components/schemas/Narrative" }
+        forecast:    { $ref: "#/components/schemas/Forecast" }
         data_source: { $ref: "#/components/schemas/DataSourceKind" }
         generated_at: { type: string, nullable: true, description: ISO-8601, stamped by the server. }
 
