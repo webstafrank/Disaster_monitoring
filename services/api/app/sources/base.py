@@ -10,7 +10,15 @@ from ..schemas import Indicator, Location, ObservationSeries
 
 
 class SourceError(Exception):
-    """Raised for unknown location/indicator or upstream data failures."""
+    """Raised for a bad request against a source: unknown location or indicator."""
+
+
+class SourceUnavailable(SourceError):
+    """Raised when the upstream data store cannot be reached or queried.
+
+    Distinct from SourceError so the API can answer 503 (infrastructure) instead of
+    404 (not found): a database outage is not the same as an unknown county.
+    """
 
 
 @runtime_checkable

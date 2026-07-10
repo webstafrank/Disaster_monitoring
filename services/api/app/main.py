@@ -23,7 +23,7 @@ from .schemas import (
     Location,
     ObservationSeries,
 )
-from .sources import SourceError, get_source
+from .sources import SourceError, SourceUnavailable, get_source
 
 app = FastAPI(title="KSA Rangeland Intelligence API", version=config.VERSION)
 
@@ -35,6 +35,15 @@ app.add_middleware(
 )
 
 source = get_source()
+
+
+@app.exception_handler(SourceUnavailable)
+def _source_unavailable(request: Request, exc: SourceUnavailable) -> JSONResponse:
+    # Upstream data store down or unreachable: infrastructure, not a bad request.
+    return JSONResponse(
+        status_code=503,
+        content=ApiError(error="source_unavailable", detail=str(exc)).model_dump(),
+    )
 
 
 @app.exception_handler(SourceError)

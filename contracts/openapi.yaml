@@ -101,8 +101,12 @@ components:
   schemas:
     DataSourceKind:
       type: string
-      description: Provenance of the data. `stub` is clearly-labeled placeholder data used until real feeds are wired; it is never real.
-      enum: [stub, geoserver]
+      description: >
+        Provenance of the numeric series. `stub` is clearly-labeled placeholder data,
+        never real. `postgis` is the real per-county feed read straight from the
+        PostGIS database. `geoserver` is retained for the map layers and is not a
+        numeric source (requesting it for series fails loud).
+      enum: [stub, postgis, geoserver]
 
     Health:
       type: object

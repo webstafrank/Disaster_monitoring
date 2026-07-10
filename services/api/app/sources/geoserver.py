@@ -1,22 +1,13 @@
-"""GeoServer / real EO data source. WIRING PENDING.
+"""GeoServer source: SUPERSEDED for the numeric time-series.
 
-This adapter is the plug point for the real feeds. It reuses the shared catalog
-(same counties, same indicators) and only needs its get_series filled in once the
-GeoServer details arrive:
+In this stack GeoServer serves WMS/WFS *map layers* for the map view; it is not the
+source of the chart time-series. Those come straight from PostGIS (see postgis.py,
+`DATA_SOURCE=postgis`). This adapter is kept so `DATA_SOURCE=geoserver` fails loud
+with that redirect instead of silently doing the wrong thing.
 
-  - GEOSERVER_URL         base URL, e.g. http://10.0.0.5:8080/geoserver
-  - GEOSERVER_WORKSPACE   workspace holding the layers
-  - GEOSERVER_USER / _PASSWORD   read credentials (omit if open on the LAN)
-  - a mapping from indicator id -> layer name / coverage
-
-Until then it raises SourceError so the API fails loud instead of serving fake data
-under a real label. Select the stub source (DATA_SOURCE=stub) for the working demo.
-
-Implementation sketch for get_series (fill when creds land):
-  1. Resolve the WFS/WMS layer for indicator_id.
-  2. Query the layer for location_id's geometry over [frm, to] (WFS GetFeature with a
-     CQL time + bbox/intersects filter, or a WCS/zonal stat for rasters).
-  3. Aggregate to monthly points, return ObservationSeries(source="geoserver", ...).
+If a future need arises to derive series from GeoServer directly (e.g. WFS GetFeature
+against a published layer, or WCS zonal statistics over raster coverages), implement
+get_series here. For now the real feed is PostGIS.
 """
 
 from __future__ import annotations
@@ -35,8 +26,6 @@ class GeoServerSource:
     def __init__(self) -> None:
         self.base_url = os.getenv("GEOSERVER_URL", "")
         self.workspace = os.getenv("GEOSERVER_WORKSPACE", "")
-        self.user = os.getenv("GEOSERVER_USER") or None
-        self.password = os.getenv("GEOSERVER_PASSWORD") or None
 
     def list_locations(self) -> list[Location]:
         return list(LOCATIONS)
@@ -52,6 +41,6 @@ class GeoServerSource:
         to: Optional[str] = None,
     ) -> ObservationSeries:
         raise SourceError(
-            "GeoServer source not wired yet. Set DATA_SOURCE=stub for the demo, or "
-            "provide GEOSERVER_URL/WORKSPACE/credentials and implement get_series."
+            "GeoServer is not the numeric source in this stack (it serves map layers). "
+            "Set DATA_SOURCE=postgis for the real time-series, or DATA_SOURCE=stub for the demo."
         )

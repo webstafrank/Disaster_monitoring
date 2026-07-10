@@ -25,7 +25,13 @@ import {
 } from "recharts";
 
 import { api, ApiRequestError } from "@/app/lib/api";
-import type { Indicator, Insight, Location, SeverityClass, TrendDirection } from "@/contracts/types";
+import type { DataSourceKind, Indicator, Insight, Location, SeverityClass, TrendDirection } from "@/contracts/types";
+
+const DATA_SOURCE_LABEL: Record<DataSourceKind, string> = {
+  stub: "Placeholder data",
+  postgis: "Live · PostGIS",
+  geoserver: "GeoServer",
+};
 
 const SEVERITY_STYLE: Record<SeverityClass, { bg: string; fg: string; label: string }> = {
   normal: { bg: "var(--earth-green-soft)", fg: "var(--earth-green)", label: "Normal" },
@@ -222,7 +228,7 @@ export function InsightExplorer() {
                   }}
                   title="Data provenance"
                 >
-                  {insight.data_source === "stub" ? "Placeholder data" : "GeoServer"}
+                  {DATA_SOURCE_LABEL[insight.data_source] ?? insight.data_source}
                 </span>
               </div>
             </div>

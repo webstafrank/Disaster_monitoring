@@ -2,7 +2,7 @@
 // openapi.yaml is the single source of truth. Keep this file in lockstep with it.
 // The frontend imports these via "@/contracts/types" (see tsconfig paths).
 
-export type DataSourceKind = "stub" | "geoserver";
+export type DataSourceKind = "stub" | "postgis" | "geoserver";
 
 export interface Health {
   status: "ok";

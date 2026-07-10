@@ -6,7 +6,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
-DataSourceKind = Literal["stub", "geoserver"]
+DataSourceKind = Literal["stub", "postgis", "geoserver"]
 IndicatorCategory = Literal["vegetation", "drought", "hydrology", "hazard"]
 Direction = Literal["higher_is_better", "lower_is_better"]
 SeverityClass = Literal["normal", "watch", "warning", "severe", "emergency"]

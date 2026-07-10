@@ -38,13 +38,15 @@ services:
       LLM_URL: http://llm:8100
       FORECAST_URL: http://forecast:8200
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      # Real numeric feed (DATA_SOURCE=postgis): read straight from the db service.
+      PG_DSN: postgresql://${POSTGRES_USER:-asal}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-asal}
       GEOSERVER_URL: http://geoserver:8080/geoserver
       GEOSERVER_WORKSPACE: ${GEOSERVER_WORKSPACE:-asal}
       GEOSERVER_USER: ${GEOSERVER_USER:-admin}
       GEOSERVER_PASSWORD: ${GEOSERVER_PASSWORD:-}
     volumes:
       - ./contracts:/contracts:ro
-    depends_on: [llm, forecast]
+    depends_on: [db, llm, forecast]
     networks: [internal]
 
   forecast:

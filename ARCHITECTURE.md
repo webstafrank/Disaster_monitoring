@@ -56,11 +56,16 @@ Endpoints: `GET /health`, `GET /locations`, `GET /indicators`,
 Selected by `DATA_SOURCE`:
 - `stub` (default) — deterministic placeholder series, tagged `source: "stub"` in every
   response so it is never mistaken for real data. Lets the whole loop run today.
-- `geoserver` — the real feed. Adapter scaffolded in `services/api/app/sources/geoserver.py`,
-  `get_series` to be implemented once the GeoServer URL, workspace, and layer mapping land.
+- `postgis` — the real feed. `services/api/app/sources/postgis.py` reads the per-county
+  monthly values straight from the PostGIS database (table in
+  `services/api/sql/observations.sql`; table/column names overridable by env). GeoServer
+  reads the same database to publish map layers, but is not in the path for the charts.
+- `geoserver` — retained for the map layers only; requesting it as a numeric source
+  fails loud and redirects to `postgis`.
 
 The catalog (which counties and indicators exist) is shared across sources
-(`services/api/app/sources/catalog.py`); only the values differ.
+(`services/api/app/sources/catalog.py`); only the values differ. A DB outage surfaces
+as HTTP 503 (`source_unavailable`), distinct from a 404 for an unknown county.
 
 ## Testing lanes
 

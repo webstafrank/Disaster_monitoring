@@ -49,9 +49,9 @@ Selected by `DATA_SOURCE`:
 
 - `stub` (default) — deterministic placeholder series, tagged `source: "stub"` in every
   response so it is never mistaken for real data. Lets the whole loop run today.
-- `geoserver` — the real feed. Adapter scaffolded in
-  `services/api/app/sources/geoserver.py`; `get_series` lands once the GeoServer URL,
-  workspace, and layer mapping are wired.
+- `postgis` — the real feed. `services/api/app/sources/postgis.py` reads per-county
+  monthly values straight from PostGIS (schema in `services/api/sql/observations.sql`).
+  GeoServer reads the same database for map layers but is not in the charts path.
 
 The catalog of counties and indicators is shared across sources
 (`services/api/app/sources/catalog.py`); only the values differ.
