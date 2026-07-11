@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+
+// Self-hosted at build time by next/font (no runtime dependency on Google's
+// CDN, which matters for the on-prem deployment). Exposed as CSS variables
+// consumed by globals.css (--font-inter / --font-space-grotesk).
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk", display: "swap" });
 
 export const metadata: Metadata = {
   title: "KSA · WFP Rangeland Intelligence Hub",
@@ -12,12 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" className={`h-full antialiased ${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="min-h-full bg-[var(--background)] text-[var(--foreground)]">
         {children}
       </body>

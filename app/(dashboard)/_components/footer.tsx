@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone, Globe, ExternalLink, Satellite } from "lucide-react";
+import { Mail, MapPin, Phone, Globe, Satellite } from "lucide-react";
 import Image from "next/image";
 
 export function Footer() {
@@ -22,7 +22,7 @@ export function Footer() {
              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--earth-green)]">Disaster Monitoring Framework</p>
           </div>
           <p className="text-sm leading-relaxed text-slate-600 max-w-md">
-            A state-of-the-art geospatial intelligence system designed to monitor drought indicators, land cover shifts, and vegetation health across Kenya's Arid and Semi-Arid Lands (ASALs).
+            A state-of-the-art geospatial intelligence system designed to monitor drought indicators, land cover shifts, and vegetation health across Kenya&apos;s Arid and Semi-Arid Lands (ASALs).
           </p>
           <div className="flex gap-4">
             <a href="#" className="h-10 w-10 flex items-center justify-center rounded-full bg-[var(--surface-strong)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-all border border-[var(--line)]">

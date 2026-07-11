@@ -122,6 +122,9 @@ export function MapFramePanel() {
   useEffect(() => {
     if (!activeId) return;
     const id = ++reqId.current;
+    // Show the spinner immediately for the new county/year before the async
+    // fetch resolves. The one extra render this triggers is intended.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(null);
     const from = `${year}-01`;

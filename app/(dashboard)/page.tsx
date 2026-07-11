@@ -132,7 +132,7 @@ export default function HomePage() {
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-[var(--foreground)]">
             Building Climate Resilience in{" "}
-            <span className="text-gradient-earth">Kenya's ASALs</span>
+            <span className="text-gradient-earth">Kenya&apos;s ASALs</span>
           </h1>
 
           <p className="mt-6 text-lg leading-relaxed text-slate-600 max-w-2xl">

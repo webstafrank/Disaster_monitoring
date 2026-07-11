@@ -95,6 +95,9 @@ export function InsightExplorer() {
   useEffect(() => {
     if (!loc || !ind) return;
     const id = ++reqId.current;
+    // Show the spinner immediately for the new selection before the async
+    // fetch resolves. The one extra render this triggers is intended.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(null);
     api
