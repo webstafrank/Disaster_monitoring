@@ -76,6 +76,22 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
 
+  /map/layers:
+    get:
+      operationId: getMapLayers
+      summary: WMS map layers published by GeoServer, for the map view.
+      description: >
+        Discovered from GeoServer's WMS GetCapabilities. Always 200: when GeoServer
+        is unconfigured or unreachable, `available` is false and `layers` is empty so
+        the map degrades to its basemap and county boundaries. `wms_base_url` is the
+        browser-facing WMS endpoint the frontend tiles from.
+      responses:
+        "200":
+          description: Map layer catalog.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MapLayerCatalog" }
+
   /insight:
     post:
       operationId: getInsight
@@ -309,6 +325,32 @@ components:
         forecast:    { $ref: "#/components/schemas/Forecast" }
         data_source: { $ref: "#/components/schemas/DataSourceKind" }
         generated_at: { type: string, nullable: true, description: ISO-8601, stamped by the server. }
+
+    MapLayer:
+      type: object
+      required: [name, title, queryable]
+      properties:
+        name:      { type: string, description: "WMS layer identifier (LAYERS param), e.g. asal:ndvi_2024." }
+        title:     { type: string, description: Human-readable layer title. }
+        workspace: { type: string, nullable: true }
+        bbox:
+          type: array
+          description: "[minLon, minLat, maxLon, maxLat], geographic (EPSG:4326)."
+          items: { type: number }
+          minItems: 4
+          maxItems: 4
+        queryable: { type: boolean }
+
+    MapLayerCatalog:
+      type: object
+      required: [wms_base_url, available, layers]
+      properties:
+        wms_base_url: { type: string, description: "Browser-facing WMS GetMap endpoint; empty when unconfigured." }
+        workspace:    { type: string, nullable: true }
+        available:    { type: boolean, description: True when GeoServer was reachable and its capabilities parsed. }
+        layers:
+          type: array
+          items: { $ref: "#/components/schemas/MapLayer" }
 
     Error:
       type: object

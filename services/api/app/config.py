@@ -19,6 +19,25 @@ FORECAST_TIMEOUT_S = float(os.getenv("FORECAST_TIMEOUT_S", "30"))
 FORECAST_HORIZON = int(os.getenv("FORECAST_HORIZON", "6"))
 FORECAST_SEASON = int(os.getenv("FORECAST_SEASON", "12"))
 
+# GeoServer WMS map layers for the map view. GEOSERVER_URL is what the API reads
+# server-side to discover layers (WMS GetCapabilities); it may be an internal
+# address (e.g. the docker service). GEOSERVER_PUBLIC_URL is the browser-facing
+# base the map tiles from and defaults to GEOSERVER_URL. The scheme is optional in
+# the env value (https:// is assumed) so a bare host still works.
+
+
+def _normalize_url(raw: str) -> str:
+    raw = raw.strip().rstrip("/")
+    if raw and not raw.startswith(("http://", "https://")):
+        raw = "https://" + raw
+    return raw
+
+
+GEOSERVER_URL = _normalize_url(os.getenv("GEOSERVER_URL", ""))
+GEOSERVER_PUBLIC_URL = _normalize_url(os.getenv("GEOSERVER_PUBLIC_URL", "")) or GEOSERVER_URL
+GEOSERVER_WORKSPACE = os.getenv("GEOSERVER_WORKSPACE", "").strip()
+GEOSERVER_TIMEOUT_S = float(os.getenv("GEOSERVER_TIMEOUT_S", "10"))
+
 # CORS: the Next.js frontend origin(s), comma-separated.
 CORS_ORIGINS = [
     o.strip()

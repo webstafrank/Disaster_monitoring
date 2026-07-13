@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Activity, Layers, LineChart, Target, MapPin, Eye, Info, Sprout, Loader2, AlertTriangle } from "lucide-react";
 
 import { api } from "@/app/lib/api";
-import type { Location } from "@/contracts/types";
+import type { Location, MapLayer } from "@/contracts/types";
 
 const MapView = dynamic(() => import("./map-view"), {
   ssr: false,
@@ -29,12 +29,9 @@ const RIBBON = [
   { id: "spi", label: "SPI Drought", icon: Target, iconWrap: "bg-[var(--terracotta-soft)] text-[var(--terracotta)]", fmt: (v: number) => v.toFixed(1) },
 ] as const;
 
-const layerGroups = [
-  { name: "Basemap & Terrain Context", active: true },
-  { name: "County Boundaries", active: true },
-  { name: "Vegetation & Biomass Indices", active: false },
-  { name: "Hydrological & Drought Layers", active: false },
-];
+// Always-on base layers the map draws itself (OSM basemap + county boundaries).
+// GeoServer WMS layers are discovered at runtime and appended, toggleable.
+const BASE_LAYERS = ["Basemap & Terrain Context", "County Boundaries"];
 
 type IndicatorData = { latest: number | null; series: number[] };
 type CountyData = Record<string, IndicatorData>;
@@ -69,6 +66,12 @@ export function MapFramePanel() {
   const [error, setError] = useState<string | null>(null);
   const reqId = useRef(0);
 
+  // GeoServer WMS catalog for the layer manager + map overlays.
+  const [wmsBaseUrl, setWmsBaseUrl] = useState("");
+  const [wmsLayers, setWmsLayers] = useState<MapLayer[]>([]);
+  const [wmsAvailable, setWmsAvailable] = useState<boolean | null>(null);
+  const [visible, setVisible] = useState<Record<string, boolean>>({});
+
   // Catalog + boundaries, once.
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +92,23 @@ export function MapFramePanel() {
         setPlaceholder(Boolean(fc?.placeholder));
       })
       .catch(() => {}); // map simply shows no boundaries if the file is missing
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // GeoServer WMS layer catalog (GET /map/layers). Empty until layers are published.
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .mapLayers()
+      .then((cat) => {
+        if (cancelled) return;
+        setWmsBaseUrl(cat.wms_base_url);
+        setWmsLayers(cat.layers);
+        setWmsAvailable(cat.available);
+      })
+      .catch(() => !cancelled && setWmsAvailable(false));
     return () => {
       cancelled = true;
     };
@@ -240,6 +260,8 @@ export function MapFramePanel() {
             resolveId={resolveId}
             fallbackCenter={fallbackCenter}
             fallbackZoom={7}
+            wmsBaseUrl={wmsBaseUrl}
+            wmsLayers={wmsLayers.map((l) => ({ name: l.name, visible: Boolean(visible[l.name]) }))}
           />
 
           {/* Map Overlay Info */}
@@ -278,27 +300,56 @@ export function MapFramePanel() {
             <h3 className="text-xl font-bold tracking-tight">Layer Manager</h3>
           </div>
           <div className="space-y-3">
-            {layerGroups.map((group) => (
+            {/* Always-on base layers drawn by the map itself. */}
+            {BASE_LAYERS.map((name) => (
               <div
-                key={group.name}
-                className={`group flex items-center justify-between rounded-2xl p-4 border transition-all cursor-pointer
-                    ${group.active ? "bg-[var(--accent-soft)] border-[var(--accent)]/30" : "bg-[var(--surface-strong)] border-transparent hover:border-[var(--line)]"}
-                `}
+                key={name}
+                className="flex items-center justify-between rounded-2xl p-4 border bg-[var(--accent-soft)] border-[var(--accent)]/30"
               >
                 <div className="flex items-center gap-3">
-                  <div
-                    className={`h-4 w-4 rounded border flex items-center justify-center transition-colors
-                        ${group.active ? "bg-[var(--accent)] border-[var(--accent)]" : "border-slate-300 bg-white"}
-                    `}
-                  >
-                    {group.active && <div className="h-2 w-2 bg-white rounded-sm" />}
+                  <div className="h-4 w-4 rounded border flex items-center justify-center bg-[var(--accent)] border-[var(--accent)]">
+                    <div className="h-2 w-2 bg-white rounded-sm" />
                   </div>
-                  <p className={`text-sm font-bold ${group.active ? "text-[var(--accent-strong)]" : "text-slate-600"}`}>
-                    {group.name}
-                  </p>
+                  <p className="text-sm font-bold text-[var(--accent-strong)]">{name}</p>
                 </div>
               </div>
             ))}
+
+            {/* GeoServer WMS layers, discovered at runtime and toggleable. */}
+            {wmsLayers.map((layer) => {
+              const on = Boolean(visible[layer.name]);
+              return (
+                <button
+                  key={layer.name}
+                  type="button"
+                  onClick={() => setVisible((v) => ({ ...v, [layer.name]: !v[layer.name] }))}
+                  title={layer.name}
+                  className={`w-full group flex items-center justify-between rounded-2xl p-4 border text-left transition-all
+                      ${on ? "bg-[var(--accent-soft)] border-[var(--accent)]/30" : "bg-[var(--surface-strong)] border-transparent hover:border-[var(--line)]"}
+                  `}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`h-4 w-4 rounded border flex items-center justify-center transition-colors
+                          ${on ? "bg-[var(--accent)] border-[var(--accent)]" : "border-slate-300 bg-white"}
+                      `}
+                    >
+                      {on && <div className="h-2 w-2 bg-white rounded-sm" />}
+                    </div>
+                    <p className={`text-sm font-bold ${on ? "text-[var(--accent-strong)]" : "text-slate-600"}`}>
+                      {layer.title}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+
+            {/* Status note when GeoServer publishes nothing or is unreachable. */}
+            {wmsAvailable !== null && wmsLayers.length === 0 && (
+              <p className="rounded-2xl bg-[var(--surface-strong)] p-4 text-xs font-medium text-slate-500">
+                {wmsAvailable ? "No GeoServer layers published yet." : "GeoServer layers unavailable."}
+              </p>
+            )}
           </div>
         </div>
 

@@ -9,6 +9,7 @@ import type {
   Insight,
   InsightRequest,
   Location,
+  MapLayerCatalog,
   ObservationSeries,
 } from "@/contracts/types";
 
@@ -43,6 +44,8 @@ export const api = {
     return get<ObservationSeries>("/observations", params);
   },
 
+  mapLayers: () => get<MapLayerCatalog>("/map/layers"),
+
   insight: async (req: InsightRequest): Promise<Insight> => {
     const res = await fetch(`${BASE}/insight`, {
       method: "POST",
@@ -57,4 +60,13 @@ export const api = {
   },
 };
 
-export type { Health, Indicator, Insight, InsightRequest, Location, ObservationSeries };
+export type {
+  Health,
+  Indicator,
+  Insight,
+  InsightRequest,
+  Location,
+  MapLayer,
+  MapLayerCatalog,
+  ObservationSeries,
+} from "@/contracts/types";

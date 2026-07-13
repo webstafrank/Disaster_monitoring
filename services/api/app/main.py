@@ -12,7 +12,7 @@ from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from . import config
+from . import config, geoserver_layers
 from .insight import build_insight
 from .schemas import (
     ApiError,
@@ -21,6 +21,7 @@ from .schemas import (
     Insight,
     InsightRequest,
     Location,
+    MapLayerCatalog,
     ObservationSeries,
 )
 from .sources import SourceError, SourceUnavailable, get_source
@@ -90,3 +91,11 @@ def observations(
 @app.post("/insight", response_model=Insight, responses={404: {"model": ApiError}})
 def insight(req: InsightRequest) -> Insight:
     return build_insight(req, source)
+
+
+@app.get("/map/layers", response_model=MapLayerCatalog)
+def map_layers() -> MapLayerCatalog:
+    # WMS map layers published by GeoServer, discovered from its capabilities.
+    # Always 200: an unconfigured/unreachable GeoServer returns available=false
+    # so the map view degrades to basemap + county boundaries.
+    return geoserver_layers.get_catalog()

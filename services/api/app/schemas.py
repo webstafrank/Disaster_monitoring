@@ -154,6 +154,21 @@ class Insight(BaseModel):
     generated_at: Optional[str] = None
 
 
+class MapLayer(BaseModel):
+    name: str  # WMS layer identifier, e.g. "asal:ndvi_2024"
+    title: str
+    workspace: Optional[str] = None
+    bbox: Optional[list[float]] = None  # [minLon, minLat, maxLon, maxLat], geographic
+    queryable: bool = False
+
+
+class MapLayerCatalog(BaseModel):
+    wms_base_url: str  # browser-facing WMS GetMap endpoint ("" when unconfigured)
+    workspace: Optional[str] = None
+    available: bool  # GeoServer reachable and its capabilities parsed
+    layers: list[MapLayer]
+
+
 class ApiError(BaseModel):
     error: str
     detail: str

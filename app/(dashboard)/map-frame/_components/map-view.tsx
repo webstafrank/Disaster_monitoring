@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Map from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
+import TileWMS from "ol/source/TileWMS";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
@@ -24,6 +25,9 @@ type Props = {
   // Used only when the selected county has no geometry in the file.
   fallbackCenter: [number, number]; // [lat, lon]
   fallbackZoom: number;
+  // GeoServer WMS overlays (from GET /map/layers). Empty until layers are published.
+  wmsBaseUrl?: string;
+  wmsLayers?: Array<{ name: string; visible: boolean }>;
 };
 
 const SELECTED = new Style({
@@ -42,10 +46,14 @@ export default function MapView({
   resolveId,
   fallbackCenter,
   fallbackZoom,
+  wmsBaseUrl,
+  wmsLayers,
 }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<Map | null>(null);
   const layerRef = useRef<VectorLayer | null>(null);
+  const wmsRef = useRef<Record<string, TileLayer>>({});
+  const [mapReady, setMapReady] = useState(false);
 
   // Latest values read inside the (stable) style/click callbacks and effects, so a
   // county switch never rebuilds the map or churns effect dependencies.
@@ -73,6 +81,7 @@ export default function MapView({
       return id && id === selectedRef.current ? SELECTED : BASE;
     };
     const layer = new VectorLayer({ source, style: styleFn });
+    layer.setZIndex(10); // county boundaries stay above any WMS overlays
     layerRef.current = layer;
 
     const map = new Map({
@@ -104,12 +113,50 @@ export default function MapView({
     });
 
     mapInstance.current = map;
+    setMapReady(true);
     return () => {
       map.setTarget(undefined);
       mapInstance.current = null;
       layerRef.current = null;
+      wmsRef.current = {};
+      setMapReady(false);
     };
   }, [geojson]);
+
+  // Sync GeoServer WMS overlays: create the ones now visible, toggle visibility,
+  // and drop any that are gone. Tiles are fetched by the browser straight from
+  // GeoServer (wmsBaseUrl); the backend only supplies the catalog.
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map || !mapReady) return;
+    const desired = wmsBaseUrl ? wmsLayers ?? [] : [];
+    const wanted = new Set(desired.map((l) => l.name));
+
+    for (const [name, layer] of Object.entries(wmsRef.current)) {
+      if (!wanted.has(name)) {
+        map.removeLayer(layer);
+        delete wmsRef.current[name];
+      }
+    }
+
+    for (const { name, visible } of desired) {
+      let layer = wmsRef.current[name];
+      if (!layer) {
+        layer = new TileLayer({
+          source: new TileWMS({
+            url: wmsBaseUrl,
+            params: { LAYERS: name, TILED: true },
+            serverType: "geoserver",
+            crossOrigin: "anonymous",
+          }),
+        });
+        layer.setZIndex(5); // above the OSM basemap, below the boundaries
+        wmsRef.current[name] = layer;
+        map.addLayer(layer);
+      }
+      layer.setVisible(visible);
+    }
+  }, [mapReady, wmsBaseUrl, wmsLayers]);
 
   // Re-style and zoom to the selected county when it changes.
   useEffect(() => {

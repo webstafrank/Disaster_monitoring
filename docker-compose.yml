@@ -40,8 +40,13 @@ services:
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       # Real numeric feed (DATA_SOURCE=postgis): read straight from the db service.
       PG_DSN: postgresql://${POSTGRES_USER:-asal}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-asal}
-      GEOSERVER_URL: http://geoserver:8080/geoserver
-      GEOSERVER_WORKSPACE: ${GEOSERVER_WORKSPACE:-asal}
+      # Server-side base for WMS layer discovery. Defaults to the bundled geoserver
+      # service; override in .env to point at an external GeoServer.
+      GEOSERVER_URL: ${GEOSERVER_URL:-http://geoserver:8080/geoserver}
+      # Browser-facing WMS base the map tiles from. Set this to a publicly reachable
+      # URL when GEOSERVER_URL is internal. Defaults to GEOSERVER_URL if unset.
+      GEOSERVER_PUBLIC_URL: ${GEOSERVER_PUBLIC_URL:-}
+      GEOSERVER_WORKSPACE: ${GEOSERVER_WORKSPACE:-}
       GEOSERVER_USER: ${GEOSERVER_USER:-admin}
       GEOSERVER_PASSWORD: ${GEOSERVER_PASSWORD:-}
     volumes:

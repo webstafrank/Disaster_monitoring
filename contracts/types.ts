@@ -151,6 +151,21 @@ export interface Insight {
   generated_at: string | null;
 }
 
+export interface MapLayer {
+  name: string; // WMS LAYERS identifier, e.g. "asal:ndvi_2024"
+  title: string;
+  workspace?: string | null;
+  bbox?: [number, number, number, number]; // [minLon, minLat, maxLon, maxLat]
+  queryable: boolean;
+}
+
+export interface MapLayerCatalog {
+  wms_base_url: string; // browser-facing WMS GetMap endpoint ("" when unconfigured)
+  workspace?: string | null;
+  available: boolean;
+  layers: MapLayer[];
+}
+
 export interface ApiError {
   error: string;
   detail: string;
