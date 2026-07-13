@@ -162,11 +162,11 @@ export default function HomePage() {
           <div className="mt-10 pt-8 border-t border-[var(--line)] flex items-center gap-6">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Partners</p>
             <div className="flex gap-4">
-              <div className="flex h-10 w-20 items-center justify-center rounded-xl border border-[var(--line)] bg-white shadow-sm px-3">
-                <Image src="/ksa.PNG" alt="KSA" width={64} height={24} className="max-h-6 w-auto object-contain" />
+              <div className="flex h-16 items-center justify-center rounded-xl border border-[var(--line)] bg-white shadow-sm px-5">
+                <Image src="/ksa.PNG" alt="KSA" width={189} height={125} className="max-h-10 w-auto object-contain" />
               </div>
-              <div className="flex h-10 w-20 items-center justify-center rounded-xl border border-[var(--line)] bg-white shadow-sm px-3">
-                <Image src="/wfp.PNG" alt="WFP" width={64} height={24} className="max-h-6 w-auto object-contain" />
+              <div className="flex h-16 items-center justify-center rounded-xl border border-[var(--line)] bg-white shadow-sm px-5">
+                <Image src="/wfp.PNG" alt="WFP" width={192} height={93} className="max-h-10 w-auto object-contain" />
               </div>
             </div>
           </div>

@@ -147,11 +147,11 @@ export function SideNav() {
         {/* Brand Header */}
         <div className="px-5 pt-6 pb-5 border-b border-[var(--sidebar-border)]">
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md">
-              <Image src="/ksa.PNG" alt="KSA" width={28} height={28} style={{ width: 'auto', height: 28 }} className="object-contain" />
+            <div className="flex h-14 shrink-0 items-center justify-center rounded-xl bg-white shadow-md px-3">
+              <Image src="/ksa.PNG" alt="KSA" width={189} height={125} className="h-9 w-auto object-contain" />
             </div>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md">
-              <Image src="/wfp.PNG" alt="WFP" width={28} height={28} style={{ width: 'auto', height: 28 }} className="object-contain" />
+            <div className="flex h-14 shrink-0 items-center justify-center rounded-xl bg-white shadow-md px-3">
+              <Image src="/wfp.PNG" alt="WFP" width={192} height={93} className="h-9 w-auto object-contain" />
             </div>
           </div>
           <div className="flex items-center gap-1.5 mb-1">

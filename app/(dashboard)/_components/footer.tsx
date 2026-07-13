@@ -12,10 +12,10 @@ export function Footer() {
       <div className="relative z-10 grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr]">
         {/* Project Summary */}
         <div className="space-y-6">
-          <div className="flex items-center gap-4">
-             <Image src="/ksa.PNG" alt="KSA Logo" width={48} height={48} className="object-contain" />
-             <div className="h-8 w-px bg-[var(--line)]" />
-             <Image src="/wfp.PNG" alt="WFP Logo" width={48} height={48} className="object-contain" />
+          <div className="flex items-center gap-5">
+             <Image src="/ksa.PNG" alt="KSA Logo" width={189} height={125} className="h-16 w-auto object-contain" />
+             <div className="h-12 w-px bg-[var(--line)]" />
+             <Image src="/wfp.PNG" alt="WFP Logo" width={192} height={93} className="h-16 w-auto object-contain" />
           </div>
           <div className="space-y-1">
              <h3 className="text-xl font-bold tracking-tight text-[var(--foreground)]">Rangeland Intelligence Hub</h3>
