@@ -1,0 +1,46 @@
+name: CI
+
+# Runs the gate lane on every push/PR so main stays green without relying on the
+# opt-in local pre-commit hook. Mirrors scripts/gate.sh + the frontend build.
+on:
+  push:
+    branches: [main, backend-scaffold]
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"  # matches the service Docker images
+
+      - name: Install service deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r services/api/requirements.txt
+          pip install -r services/llm/requirements.txt
+          pip install -r services/forecast/requirements.txt
+
+      - name: Gate tests
+        run: PY=python ./scripts/gate.sh
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build

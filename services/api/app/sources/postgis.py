@@ -97,6 +97,15 @@ class PostgresSource:
         self._fetch = fetcher or _psycopg_fetch
         self._cfg = cfg or _Cfg.from_env()
 
+    def probe(self) -> None:
+        """Readiness check: raise SourceUnavailable if the database is unreachable.
+        Runs a no-row query so it costs a round-trip, not a scan."""
+        self._fetch(
+            _dsn_from_env(),
+            "SELECT NULL::text, NULL::double precision WHERE false",
+            {},
+        )
+
     def list_locations(self) -> list[Location]:
         return list(LOCATIONS)
 

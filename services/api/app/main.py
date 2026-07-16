@@ -12,7 +12,7 @@ from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from . import config, geoserver_layers
+from . import config, geoserver_layers, readiness
 from .insight import build_insight
 from .schemas import (
     ApiError,
@@ -23,6 +23,7 @@ from .schemas import (
     Location,
     MapLayerCatalog,
     ObservationSeries,
+    Readiness,
 )
 from .sources import SourceError, SourceUnavailable, get_source
 
@@ -62,6 +63,16 @@ def health() -> Health:
         llm_mode=os.getenv("LLM_MODE", "stub"),
         version=config.VERSION,
     )
+
+
+@app.get("/ready", response_model=Readiness, responses={503: {"model": Readiness}})
+def ready() -> Readiness:
+    # Deep check: probes data source, llm, forecast, geoserver. 503 when a required
+    # dependency is down so orchestration and deploy.sh can gate on it.
+    r = readiness.build_readiness(source)
+    if r.ready:
+        return r
+    return JSONResponse(status_code=503, content=r.model_dump())
 
 
 @app.get("/locations", response_model=list[Location])

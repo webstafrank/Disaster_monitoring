@@ -15,14 +15,19 @@ git pull --ff-only
 echo "[2/4] Building and starting services..."
 docker compose --env-file .env up -d --build
 
-echo "[3/4] Waiting for the API to report healthy..."
-for i in $(seq 1 30); do
-  if curl -fsk https://localhost/api/health >/dev/null 2>&1; then
-    echo "    API healthy."
+echo "[3/4] Waiting for the stack to report ready..."
+# /api/ready is a deep probe: it returns 503 until the data source, llm and
+# forecast services are all reachable, so this gates on the whole stack, not just
+# the API process being up.
+for i in $(seq 1 45); do
+  if curl -fsk https://localhost/api/ready >/dev/null 2>&1; then
+    echo "    Stack ready."
     break
   fi
   sleep 2
-  if [[ "$i" == "30" ]]; then echo "    WARNING: API did not report healthy in 60s." >&2; fi
+  if [[ "$i" == "45" ]]; then
+    echo "    WARNING: stack not ready in 90s. Check: curl -sk https://localhost/api/ready" >&2
+  fi
 done
 
 echo "[4/4] Status:"

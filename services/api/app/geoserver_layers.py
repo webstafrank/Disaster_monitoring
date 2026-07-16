@@ -100,8 +100,16 @@ def parse_capabilities(xml_bytes: bytes, workspace: str = "") -> list[MapLayer]:
 
 
 def _http_fetch(url: str, timeout_s: float) -> Optional[bytes]:
+    """Fetch capabilities. Tries anonymous first (the common case), then retries
+    with basic auth only if the server demands it (401/403) and creds are set. This
+    keeps anonymous discovery working without risking a bad-credential 401 on a
+    GeoServer that never wanted auth."""
     try:
         r = httpx.get(url, timeout=timeout_s)
+        if r.status_code in (401, 403):
+            auth = config.geoserver_auth()
+            if auth is not None:
+                r = httpx.get(url, timeout=timeout_s, auth=auth)
         r.raise_for_status()
         return r.content
     except httpx.HTTPError:

@@ -88,6 +88,28 @@ Server prep: install Docker + Compose, provision TLS certs into `deploy/certs/`,
 authenticate the `claude` CLI for the llm service (host run or mounted config). See
 `services/llm/README.md`.
 
+### Before you go live (checklist)
+
+The defaults run a self-contained demo. A real deployment must change these, or it
+will silently serve placeholder data and templated text:
+
+1. **Real numbers:** set `DATA_SOURCE=postgis` in `.env`. The db service applies
+   `services/api/sql/observations.sql` on first boot (empty volume only); load the
+   county/indicator series into `indicator_observations`. With `DATA_SOURCE=stub`
+   every series is labeled `source: "stub"` and is not real.
+2. **Real narrative:** set `LLM_MODE=claude` and give the llm service an
+   authenticated `claude` CLI (host run, or mount `CLAUDE_CONFIG_DIR` per
+   `docker-compose.yml`). Left as `stub`, insights fall back to templated text.
+3. **Domain + TLS:** replace `server_name asal.internal` in `deploy/nginx.conf`,
+   set `CORS_ORIGINS` to that same origin, and drop real certs in `deploy/certs/`
+   (`server.crt`, `server.key`).
+4. **GeoServer:** point `GEOSERVER_URL` at the real server. If its capabilities
+   need auth, set `GEOSERVER_USER`/`GEOSERVER_PASSWORD` (discovery tries anonymous
+   first, then those creds on a 401/403). The nginx `/geoserver/` proxy exposes
+   only the OGC data endpoints; `web`/`rest` admin surfaces are blocked.
+5. **Verify:** `curl -sk https://<host>/api/ready` must return `ready: true` with
+   every dependency `ok`. `deploy.sh` gates on this.
+
 ## Tech
 
 Next.js 16 (App Router, React 19), OpenLayers + Recharts for maps and charts, Tailwind 4

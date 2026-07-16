@@ -20,6 +20,20 @@ class Health(BaseModel):
     version: Optional[str] = None
 
 
+class DependencyStatus(BaseModel):
+    name: str  # data_source | llm | forecast | geoserver
+    ok: bool
+    detail: Optional[str] = None
+
+
+class Readiness(BaseModel):
+    # Deep health: unlike /health (process is up), /ready probes every downstream so
+    # deploy.sh and orchestration can gate on the whole stack actually working.
+    ready: bool
+    version: Optional[str] = None
+    dependencies: list[DependencyStatus]
+
+
 class LatLon(BaseModel):
     lat: float
     lon: float

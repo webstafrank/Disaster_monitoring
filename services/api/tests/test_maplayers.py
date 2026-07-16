@@ -128,6 +128,48 @@ def test_endpoint_returns_catalog(monkeypatch):
     assert "wms_base_url" in body
 
 
+class _FakeResp:
+    def __init__(self, status_code, content=b""):
+        self.status_code = status_code
+        self.content = content
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise geoserver_layers.httpx.HTTPStatusError(
+                "err", request=None, response=None
+            )
+
+
+def test_http_fetch_retries_with_auth_on_401(monkeypatch):
+    monkeypatch.setattr(config, "GEOSERVER_USER", "admin")
+    monkeypatch.setattr(config, "GEOSERVER_PASSWORD", "s3cret")
+    calls = []
+
+    def fake_get(url, timeout, auth=None):
+        calls.append(auth)
+        # Anonymous is rejected; the authenticated retry succeeds.
+        return _FakeResp(200, CAPS) if auth is not None else _FakeResp(401)
+
+    monkeypatch.setattr(geoserver_layers.httpx, "get", fake_get)
+    out = geoserver_layers._http_fetch("https://gs.example/geoserver/wms?x", 5.0)
+    assert out == CAPS
+    assert calls == [None, ("admin", "s3cret")]  # tried anonymous, then auth
+
+
+def test_http_fetch_no_retry_when_creds_unset(monkeypatch):
+    monkeypatch.setattr(config, "GEOSERVER_USER", "")
+    monkeypatch.setattr(config, "GEOSERVER_PASSWORD", "")
+    calls = []
+
+    def fake_get(url, timeout, auth=None):
+        calls.append(auth)
+        return _FakeResp(401)
+
+    monkeypatch.setattr(geoserver_layers.httpx, "get", fake_get)
+    assert geoserver_layers._http_fetch("https://gs.example/geoserver/wms?x", 5.0) is None
+    assert calls == [None]  # no auth configured, no retry
+
+
 @pytest.fixture(autouse=True)
 def _clear_cache():
     # Isolate tests from the module-level TTL cache (only used on the default fetcher path).

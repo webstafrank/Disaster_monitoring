@@ -16,6 +16,15 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
     volumes:
       - db_data:/var/lib/postgresql/data
+      # Applied once, on first init of an empty data volume. Idempotent
+      # (CREATE TABLE IF NOT EXISTS) so DATA_SOURCE=postgis has its table on boot.
+      - ./services/api/sql/observations.sql:/docker-entrypoint-initdb.d/10-observations.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-asal} -d ${POSTGRES_DB:-asal}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks: [internal]
 
   geoserver:
@@ -27,7 +36,9 @@ services:
     volumes:
       - geoserver_data:/opt/geoserver_data
       - ${RASTER_DIR:-./data/rasters}:/opt/rasters:ro
-    depends_on: [db]
+    depends_on:
+      db:
+        condition: service_healthy
     networks: [internal]
 
   api:
@@ -51,7 +62,19 @@ services:
       GEOSERVER_PASSWORD: ${GEOSERVER_PASSWORD:-}
     volumes:
       - ./contracts:/contracts:ro
-    depends_on: [db, llm, forecast]
+    depends_on:
+      db:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+      forecast:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     networks: [internal]
 
   forecast:
@@ -61,6 +84,12 @@ services:
       FORECAST_ARTIFACTS: /app/artifacts
     volumes:
       - forecast_artifacts:/app/artifacts
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8200/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     networks: [internal]
 
   llm:
@@ -71,6 +100,12 @@ services:
     # For LLM_MODE=claude in a container, mount authenticated Claude config:
     # volumes:
     #   - ${CLAUDE_CONFIG_DIR:-/home/svc/.claude}:/root/.claude:ro
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8100/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     networks: [internal]
 
   frontend:
@@ -80,6 +115,12 @@ services:
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_API_BASE: /api
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks: [internal]
 
   nginx:
@@ -91,7 +132,13 @@ services:
     volumes:
       - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./deploy/certs:/etc/nginx/certs:ro
-    depends_on: [frontend, api, geoserver]
+    depends_on:
+      frontend:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+      geoserver:
+        condition: service_started
     networks: [internal]
 
 volumes:

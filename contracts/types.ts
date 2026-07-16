@@ -11,6 +11,18 @@ export interface Health {
   version?: string;
 }
 
+export interface DependencyStatus {
+  name: string; // data_source | llm | forecast | geoserver
+  ok: boolean;
+  detail?: string | null;
+}
+
+export interface Readiness {
+  ready: boolean;
+  version?: string;
+  dependencies: DependencyStatus[];
+}
+
 export interface LatLon {
   lat: number;
   lon: number;

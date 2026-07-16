@@ -29,6 +29,27 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/Health" }
 
+  /ready:
+    get:
+      operationId: getReadiness
+      summary: Deep readiness probe across all downstream dependencies.
+      description: >
+        Unlike /health (process is up), /ready probes the active data source, the llm
+        and forecast services, and GeoServer. Returns 200 when every required
+        dependency is reachable, 503 otherwise. GeoServer is optional: the map
+        degrades gracefully, so it is reported but never flips readiness to false.
+      responses:
+        "200":
+          description: All required dependencies reachable.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Readiness" }
+        "503":
+          description: One or more required dependencies unavailable.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Readiness" }
+
   /locations:
     get:
       operationId: listLocations
@@ -132,6 +153,24 @@ components:
         data_source: { $ref: "#/components/schemas/DataSourceKind" }
         llm_mode:    { type: string, enum: [claude, stub], description: Whether narrative comes from local Claude Code or a templated stub. }
         version:     { type: string }
+
+    DependencyStatus:
+      type: object
+      required: [name, ok]
+      properties:
+        name:   { type: string, description: "data_source | llm | forecast | geoserver." }
+        ok:     { type: boolean }
+        detail: { type: string, nullable: true }
+
+    Readiness:
+      type: object
+      required: [ready, dependencies]
+      properties:
+        ready:   { type: boolean, description: True when every required dependency is reachable. }
+        version: { type: string }
+        dependencies:
+          type: array
+          items: { $ref: "#/components/schemas/DependencyStatus" }
 
     LatLon:
       type: object

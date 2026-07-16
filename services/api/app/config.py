@@ -6,7 +6,8 @@ import os
 
 VERSION = "0.1.0"
 
-# Data source: "stub" (default, placeholder) or "geoserver" (real, when wired).
+# Data source: "stub" (default, labeled placeholder) or "postgis" (the real
+# per-county feed). "geoserver" is map-layers-only and not a numeric source.
 DATA_SOURCE = os.getenv("DATA_SOURCE", "stub")
 
 # LLM narrative service (services/llm). Reached over HTTP on the physical server.
@@ -37,6 +38,17 @@ GEOSERVER_URL = _normalize_url(os.getenv("GEOSERVER_URL", ""))
 GEOSERVER_PUBLIC_URL = _normalize_url(os.getenv("GEOSERVER_PUBLIC_URL", "")) or GEOSERVER_URL
 GEOSERVER_WORKSPACE = os.getenv("GEOSERVER_WORKSPACE", "").strip()
 GEOSERVER_TIMEOUT_S = float(os.getenv("GEOSERVER_TIMEOUT_S", "10"))
+# Credentials for capabilities discovery. Only sent when both are set; a GeoServer
+# that allows anonymous GetCapabilities needs neither.
+GEOSERVER_USER = os.getenv("GEOSERVER_USER", "").strip()
+GEOSERVER_PASSWORD = os.getenv("GEOSERVER_PASSWORD", "")
+
+
+def geoserver_auth() -> tuple[str, str] | None:
+    """Basic-auth pair for GeoServer, or None when unset (anonymous discovery)."""
+    if GEOSERVER_USER and GEOSERVER_PASSWORD:
+        return (GEOSERVER_USER, GEOSERVER_PASSWORD)
+    return None
 
 # CORS: the Next.js frontend origin(s), comma-separated.
 CORS_ORIGINS = [

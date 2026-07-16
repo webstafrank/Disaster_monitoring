@@ -1,0 +1,43 @@
+# Keep the Docker build context small and free of host cruft/secrets.
+# Both Dockerfile.frontend (COPY . .) and the service images build from here.
+
+# node / next
+node_modules
+.next
+out
+build
+npm-debug.log*
+
+# python / backend
+__pycache__/
+*.pyc
+.venv
+.venv-test
+.pytest_cache
+
+# vcs + editor
+.git
+.gitignore
+.githooks
+
+# secrets and local env (never bake into an image)
+.env
+.env.*
+!.env.example
+
+# server data + certs (provisioned on the host, mounted at runtime)
+data/
+deploy/certs/
+
+# trained model artifacts (regenerated at runtime into a volume)
+services/forecast/artifacts/
+
+# backend + ops (not part of the frontend image; root context = frontend build)
+services
+scripts
+deploy
+
+# build metadata / misc
+*.tsbuildinfo
+*Zone.Identifier
+.DS_Store
