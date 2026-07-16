@@ -132,6 +132,9 @@ services:
     volumes:
       - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./deploy/certs:/etc/nginx/certs:ro
+      # HTTP basic-auth users. Create ./deploy/auth/.htpasswd first
+      # (scripts/set_password.sh); the real file is gitignored.
+      - ./deploy/auth:/etc/nginx/auth:ro
     depends_on:
       frontend:
         condition: service_healthy

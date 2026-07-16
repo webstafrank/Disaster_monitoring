@@ -9,6 +9,12 @@ if [[ ! -f .env ]]; then
   exit 1
 fi
 
+if [[ ! -s deploy/auth/.htpasswd ]]; then
+  echo "ERROR: deploy/auth/.htpasswd missing. Nginx basic auth would lock everyone out." >&2
+  echo "       Create a user first:  ./scripts/set_password.sh <username>" >&2
+  exit 1
+fi
+
 echo "[1/4] Pulling latest..."
 git pull --ff-only
 

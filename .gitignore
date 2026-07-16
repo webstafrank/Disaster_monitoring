@@ -38,6 +38,9 @@ __pycache__/
 /data/
 /deploy/certs/
 
+# nginx basic-auth users (real credentials; never in the repo)
+/deploy/auth/.htpasswd
+
 # windows download cruft
 *Zone.Identifier
 

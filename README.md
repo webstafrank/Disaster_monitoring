@@ -103,11 +103,16 @@ will silently serve placeholder data and templated text:
 3. **Domain + TLS:** replace `server_name asal.internal` in `deploy/nginx.conf`,
    set `CORS_ORIGINS` to that same origin, and drop real certs in `deploy/certs/`
    (`server.crt`, `server.key`).
-4. **GeoServer:** point `GEOSERVER_URL` at the real server. If its capabilities
+4. **Access control:** nginx puts HTTP basic auth over the whole site. Create at
+   least one user before deploying, or nginx locks everyone out:
+   `./scripts/set_password.sh <username>` writes `deploy/auth/.htpasswd`
+   (gitignored). `/api/health` and `/api/ready` stay open for monitoring. See
+   `deploy/auth/README.md`.
+5. **GeoServer:** point `GEOSERVER_URL` at the real server. If its capabilities
    need auth, set `GEOSERVER_USER`/`GEOSERVER_PASSWORD` (discovery tries anonymous
    first, then those creds on a 401/403). The nginx `/geoserver/` proxy exposes
    only the OGC data endpoints; `web`/`rest` admin surfaces are blocked.
-5. **Verify:** `curl -sk https://<host>/api/ready` must return `ready: true` with
+6. **Verify:** `curl -sk https://<host>/api/ready` must return `ready: true` with
    every dependency `ok`. `deploy.sh` gates on this.
 
 ## Tech
